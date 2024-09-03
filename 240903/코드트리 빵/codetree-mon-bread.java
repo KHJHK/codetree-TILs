@@ -1,7 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-
 public class Main {
 	
 	static class Person {
@@ -118,26 +117,31 @@ public class Main {
 		boolean isBasecamp = false;
 		List<int[]> basecampList = new ArrayList<>();
 		
+		int qSize = 1;
+		
 		while(!queue.isEmpty() && !isBasecamp) {
-			int[] now = queue.poll();
-			int r = now[0];
-			int c = now[1];
-			
-			for(int d = 0; d < 4; d++) {
-				int nr = r + dr[d];
-				int nc = c + dc[d];
+			for(int qs = 0; qs < qSize; qs++) {
+				int[] now = queue.poll();
+				int r = now[0];
+				int c = now[1];
 				
-				if(OOB(nr, nc) || map[nr][nc] == 2 || visited[nr][nc]) continue; //격자 나가거나, 막힌 길이거나, 방문했으면 넘기기
-				
-				if(map[nr][nc] == 1) { //베이스캠프면 해당 위치 저장
-					isBasecamp = true;
-					basecampList.add(new int[] {nr, nc});
-					continue;
+				for(int d = 0; d < 4; d++) {
+					int nr = r + dr[d];
+					int nc = c + dc[d];
+					
+					if(OOB(nr, nc) || map[nr][nc] == 2 || visited[nr][nc]) continue; //격자 나가거나, 막힌 길이거나, 방문했으면 넘기기
+					
+					if(map[nr][nc] == 1) { //베이스캠프면 해당 위치 저장
+						isBasecamp = true;
+						basecampList.add(new int[] {nr, nc});
+						continue;
+					}
+					
+					visited[nr][nc] = true;
+					queue.offer(new int[] {nr, nc});
 				}
-				
-				visited[nr][nc] = true;
-				queue.offer(new int[] {nr, nc});
 			}
+			qSize = queue.size();
 		}
 		
 		int br = N;
