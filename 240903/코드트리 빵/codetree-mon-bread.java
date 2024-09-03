@@ -40,13 +40,18 @@ public class Main {
 		}
 		
 		int time = 0; //idx로 많이 사용될 예정
+		int arrived = 0;
 		
-		while(blockStore() < M) { //조건 : blockStore(time) != M;
+		while(arrived < M) { //조건 : blockStore(time) != M;
 			//1. 현재 시간대 이전 사람 이동 - 베이스캠프와 겹치는 경우 방지를 위해 이동 먼저
-			movePeople(++time);
+			movePeople(time);
+			//2. 사람이 도착한 편의점 막기, 현재 시간대 이전 사람들의 목적지만 확인하면 됨
+			arrived = blockStore();
 			
-			//2. 현재 시간대 사람 베이스캠프 지정
-			if(time <= M) getBasecamp(time);
+			//3. 현재 시간대 사람 베이스캠프 지정
+			if(time < M) getBasecamp(time);
+			
+			time++;
 		}
 		
 
@@ -54,9 +59,9 @@ public class Main {
 	}
 	
 	static void movePeople(int time){
-		if(time > M + 1) time = M + 1; // 시간이 사람 수보다 커지면 idx값 조정을 위해 time값을 M으로 조정
+		if(time > M) time = M; // 시간이 이동할 사람 수보다 커지면 idx값 조정을 위해 time값을 M으로 조정
 		//현재 시간 이전까지의 사람들 모두 이동
-		for(int idx = 0; idx < time - 1; idx++) {
+		for(int idx = 0; idx < time; idx++) {
 			int startRow = people[idx].r;
 			int startCol = people[idx].c;
 			
@@ -103,7 +108,7 @@ public class Main {
 	}
 	
 	static void getBasecamp(int time){
-		int idx = time - 1;
+		int idx = time;
 		
 		boolean[][] visited = new boolean[N][N];
 		Queue<int[]> queue = new ArrayDeque<>();
