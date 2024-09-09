@@ -41,7 +41,7 @@ public class Main {
 		int time = 0;
 		while(pcnt > 0 && time++ < K) {
 			movePlayer();
-			findEndLotateSquare();
+			findEndrotateSquare();
 		}
 		System.out.println(moveCnt);
 		System.out.println(er + " " + ec);
@@ -49,7 +49,7 @@ public class Main {
 	}
 	
 	static void movePlayer() {
-		for(int p = M - 1; p >= 0; p--) { // 삭제시 list index값 꼬이지 않기 위해 역순으로 for문
+		for(int p = M - 1; p >= 0; p--) {
 			int r = players[p][0];
 			int c = players[p][1];
 			
@@ -70,28 +70,33 @@ public class Main {
 				else{
 					players[p][0] = nr;
 					players[p][1] = nc;
-					map[nr][nc] = -1;
 				}
 				map[r][c] = 0;
 				break; //이동시 다음 player로 넘어가기
 			}
 		}
 		
+		for(int p = 0; p < M; p++) {
+			int r = players[p][0];
+			int c = players[p][1];
+			map[r][c] = -1;
+		}
+		
 	};
 	
-	static void findEndLotateSquare() {
+	static void findEndrotateSquare() {
 		int squareLen = 2;
 		while(squareLen < N) {
 			for(int r = 1; r <= N - squareLen + 1; r++) {
 				for(int c = 1; c <= N - squareLen + 1; c++) {
-					if(isLotateAbleSquare(r, c, squareLen)) return;
+					if(isrotateAbleSquare(r, c, squareLen)) return;
 				}
 			}
 			squareLen++;
 		}
 	}
 	
-	static boolean isLotateAbleSquare(int row, int col, int len) {
+	static boolean isrotateAbleSquare(int row, int col, int len) {
 		//player와 exit가 정사각형 안에 있는지 확인
 		boolean isPlayerIn = false;
 		boolean isExitIn = false;
@@ -101,7 +106,7 @@ public class Main {
 				if(map[r][c] == -1) isPlayerIn = true;
 				if(map[r][c] == -2) isExitIn = true;
 				if(isPlayerIn && isExitIn) {
-					lotateSquare(row, col, len);
+					rotateSquare(row, col, len);
 					return true;
 				}
 			}
@@ -110,8 +115,8 @@ public class Main {
 		return false;
 	}
 	
-	static void lotateSquare(int row, int col, int len) {// 실제 회전 함수
-		List<Integer> lotatePlayers = new ArrayList<>();
+	static void rotateSquare(int row, int col, int len) {// 실제 회전 함수
+		List<Integer> rotatePlayers = new ArrayList<>();
 		
 		int[][] temp = new int[len][len];
 		for(int r = row; r < row + len; r++) {
@@ -119,7 +124,7 @@ public class Main {
 				if(map[r][c] > 0) map[r][c]--;
 				if(map[r][c] == -1) {
 					for(int p = 0; p < M; p++) {
-						if(players[p][0] == r && players[p][1] == c) lotatePlayers.add(p);
+						if(players[p][0] == r && players[p][1] == c) rotatePlayers.add(p);
 					}
 				}
 				int tr = r - row;
@@ -139,7 +144,7 @@ public class Main {
 				}
 				if(map[r][c] == -1) {
 					//회전 처리
-					for(int idx : lotatePlayers) {
+					for(int idx : rotatePlayers) {
 						//c - c시작점 + r시작점, len - 1 - (r-r시작점) + c시작점
 						int pr = players[idx][0];
 						int pc = players[idx][1];
