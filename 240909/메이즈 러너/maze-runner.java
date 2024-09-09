@@ -41,7 +41,7 @@ public class Main {
 		int time = 0;
 		while(pcnt > 0 && time++ < K) {
 			movePlayer();
-			findEndrotateSquare();
+			findEndRotateSquare();
 		}
 		System.out.println(moveCnt);
 		System.out.println(er + " " + ec);
@@ -49,7 +49,7 @@ public class Main {
 	}
 	
 	static void movePlayer() {
-		for(int p = M - 1; p >= 0; p--) {
+		for(int p = 0; p < M; p++) {
 			int r = players[p][0];
 			int c = players[p][1];
 			
@@ -79,24 +79,26 @@ public class Main {
 		for(int p = 0; p < M; p++) {
 			int r = players[p][0];
 			int c = players[p][1];
+			if(r == 0 && c == 0) continue;
+
 			map[r][c] = -1;
 		}
 		
 	};
 	
-	static void findEndrotateSquare() {
+	static void findEndRotateSquare() {
 		int squareLen = 2;
 		while(squareLen < N) {
 			for(int r = 1; r <= N - squareLen + 1; r++) {
 				for(int c = 1; c <= N - squareLen + 1; c++) {
-					if(isrotateAbleSquare(r, c, squareLen)) return;
+					if(isRotateAbleSquare(r, c, squareLen)) return;
 				}
 			}
 			squareLen++;
 		}
 	}
 	
-	static boolean isrotateAbleSquare(int row, int col, int len) {
+	static boolean isRotateAbleSquare(int row, int col, int len) {
 		//player와 exit가 정사각형 안에 있는지 확인
 		boolean isPlayerIn = false;
 		boolean isExitIn = false;
@@ -116,7 +118,7 @@ public class Main {
 	}
 	
 	static void rotateSquare(int row, int col, int len) {// 실제 회전 함수
-		List<Integer> rotatePlayers = new ArrayList<>();
+		List<int[]> rotatePlayers = new ArrayList<>(); //idx값과 이미 회전한 플레이어인지 체크하기 위한 변수
 		
 		int[][] temp = new int[len][len];
 		for(int r = row; r < row + len; r++) {
@@ -124,7 +126,7 @@ public class Main {
 				if(map[r][c] > 0) map[r][c]--;
 				if(map[r][c] == -1) {
 					for(int p = 0; p < M; p++) {
-						if(players[p][0] == r && players[p][1] == c) rotatePlayers.add(p);
+						if(players[p][0] == r && players[p][1] == c) rotatePlayers.add(new int[] {p, 0});
 					}
 				}
 				int tr = r - row;
@@ -144,13 +146,15 @@ public class Main {
 				}
 				if(map[r][c] == -1) {
 					//회전 처리
-					for(int idx : rotatePlayers) {
+					for(int[] player : rotatePlayers) {
 						//c - c시작점 + r시작점, len - 1 - (r-r시작점) + c시작점
+						int idx = player[0];
 						int pr = players[idx][0];
 						int pc = players[idx][1];
-						if(r == pc - col + row && c == len - 1 - (pr - row) + col) {
+						if(r == pc - col + row && c == len - 1 - (pr - row) + col && player[1] == 0) {
 							players[idx][0] = r;
 							players[idx][1] = c;
+							player[1] = 1;
 						}
 					}
 				}
