@@ -39,6 +39,8 @@ public class Main {
 					if(moveMax == N - 1) turnMax = 3; //마지막에는 회전 3번까지 가능
 				}
 			}
+			
+			if(r == 0 && c == 0) d = 2;
 		}
 		
 		void moveToInSide() {
@@ -54,6 +56,8 @@ public class Main {
 					turnMax = 2; //마지막에는 회전 3번까지 가능
 				}
 			}
+			
+			if(r == N/2 && c == N/2) d = 0;
 		}
 		
 		void turn(boolean isMoveOutSide) {
@@ -178,7 +182,7 @@ public class Main {
 						p.isCatched = true; //잡힘 표시
 						cnt++; 
 					}
-					break;
+					continue;
 				}
 			}
 		}
