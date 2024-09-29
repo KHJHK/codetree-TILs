@@ -23,7 +23,7 @@ public class Main {
 			num = flipCycle.poll();
 		}
 		
-		void turn(){
+		void turnClockWise(){
 			int tempTop = top;
 			int tempBottom = bottom;
 			top = flipCycle.poll();
@@ -32,11 +32,24 @@ public class Main {
 			flipCycle.addLast(tempTop);
 		}
 		
+		void turnCounterClockWise() {
+			int tempTop = top;
+			int tempBottom = bottom;
+			top = flipCycle.pollLast();
+			bottom = flipCycle.poll();
+			flipCycle.addFirst(tempTop);
+			flipCycle.addLast(tempBottom);
+		}
+		
 		void reverse() {
 			int first = flipCycle.pollFirst();
 			int last = flipCycle.pollLast();
 			flipCycle.addFirst(last);
 			flipCycle.addLast(first);
+			
+			int tempTop = top;
+			top = bottom;
+			bottom = tempTop;
 		}
 	}
 	
@@ -63,10 +76,17 @@ public class Main {
 		
 		int point = 0;
 		
+//		printBoard();
 		for(int i = 0; i < M; i++) {
+//			System.out.printf("--------- turn %d ---------\n", i + 1);
 			moveDice();
 			turnDice();
 			point += getPoint();
+//			System.out.printf("score : %d || dice : %d\n", point, dice.num);
+//			System.out.printf("bottom : %d || top : %d\n", dice.bottom, dice.top);
+//			System.out.printf("next : %d || before : %d\n", dice.flipCycle.getFirst(), dice.flipCycle.getLast());
+//			System.out.printf("loc : %d, %d || dir : %d\n", r, c, dir);
+//			printBoard();
 		}
 		
 		System.out.println(point);
@@ -80,17 +100,21 @@ public class Main {
 			dice.reverse();
 			dir = (dir + 2) % 4;
 			moveDice();
+		}else {
+			dice.flip();
+			r = nr;
+			c = nc;
 		}
-		
-		dice.flip();
-		r = nr;
-		c = nc;
 	}
 	
 	static void turnDice() {
 		if(dice.num > board[r][c]) {
-			dice.turn();
+			dice.turnClockWise();
 			dir = (dir + 1) % 4;
+		}
+		if(dice.num < board[r][c]) {
+			dice.turnCounterClockWise();
+			dir = (dir - 1 + 4) % 4;
 		}
 	}
 	
@@ -100,7 +124,6 @@ public class Main {
 		queue.add(new int[] {r, c});
 		visited[r][c] = true;
 		int targetNum = board[r][c];
-//		System.out.printf("%d | (%d, %d)\n", targetNum, r, c);
 		int cnt = 1; //현재 칸 포함하고 시작하니 1부터 시작
 		
 		while(!queue.isEmpty()) {
@@ -124,4 +147,13 @@ public class Main {
 	}
 	
 	static boolean OOB(int r, int c) { return r < 0 || r >= N || c < 0 || c >= N; }
+	
+	static void printBoard() {
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(r == i && c == j) System.out.printf("D ");
+				else System.out.printf("%d ", board[i][j]);
+			}System.out.println();
+		}System.out.println();
+	}
 }
