@@ -2,7 +2,6 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-	
 	static int N, M, birusTotalCnt, hospitalCnt;
 	static int answer = Integer.MAX_VALUE;
 	static int[] dr = {-1, 0, 1, 0};
@@ -67,15 +66,17 @@ public class Main {
 		
 		int depth = -1;
 		int birusCnt = 0;
-		boolean isBirusRemoved = false;
+		int queueHospitalCnt = 0;
+		int qSize = 0;
 		
 		while(!queue.isEmpty()) {
-			isBirusRemoved = false;
-			int qSize = queue.size();
+			queueHospitalCnt = 0;
+			qSize = queue.size();
 			depth++;
 			
 			for(int qs = 0; qs < qSize; qs++) {
 				now = queue.poll();
+				if(map[now[0]][now[1]] == 2) queueHospitalCnt++;
 				for(int d = 0; d < 4; d++) {
 					int nr = now[0] + dr[d];
 					int nc = now[1] + dc[d];
@@ -86,15 +87,13 @@ public class Main {
 					
 					queue.offer(new int[] {nr, nc});
 					visited[nr][nc] = true;
-					if(map[nr][nc] == 0) {
-						isBirusRemoved = true;
-						birusCnt++;
-					}
+					
+					if(map[nr][nc] == 0) birusCnt++;
 				}
 			}
 		}
 		
-		if(!isBirusRemoved) depth--;
+		if(queueHospitalCnt == qSize) depth--;
 		
 		if(birusCnt != birusTotalCnt) return Integer.MAX_VALUE;
 		if(depth == -1) depth = 0;
