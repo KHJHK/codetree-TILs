@@ -1,7 +1,8 @@
 import java.util.*;
 import java.io.*;
 
-public class Main {	
+public class Main {
+	
 	static int N, M, birusTotalCnt, hospitalCnt;
 	static int answer = Integer.MAX_VALUE;
 	static int[] dr = {-1, 0, 1, 0};
@@ -53,6 +54,7 @@ public class Main {
 	
 	static int bfs() {
 		for(boolean[] v : visited) Arrays.fill(v, false);
+		
 		queue.clear();
 		
 		//queue에 병원 시작점들 넣어주기
@@ -63,12 +65,15 @@ public class Main {
 			visited[now[0]][now[1]] = true;
 		}
 		
-		int depth = 0;
+		int depth = -1;
 		int birusCnt = 0;
+		boolean isBirusRemoved = false;
 		
 		while(!queue.isEmpty()) {
+			isBirusRemoved = false;
 			int qSize = queue.size();
 			depth++;
+			
 			for(int qs = 0; qs < qSize; qs++) {
 				now = queue.poll();
 				for(int d = 0; d < 4; d++) {
@@ -77,17 +82,23 @@ public class Main {
 					
 					if(OOB(nr, nc)) continue;
 					if(visited[nr][nc]) continue;
-					if(map[nr][nc] != 0) continue;
+					if(map[nr][nc] == 1) continue;
 					
 					queue.offer(new int[] {nr, nc});
 					visited[nr][nc] = true;
-					birusCnt++;
+					if(map[nr][nc] == 0) {
+						isBirusRemoved = true;
+						birusCnt++;
+					}
 				}
 			}
 		}
 		
+		if(!isBirusRemoved) depth--;
+		
 		if(birusCnt != birusTotalCnt) return Integer.MAX_VALUE;
-		return depth - 1;
+		if(depth == -1) depth = 0;
+		return depth;
 	}
 	
 	static boolean OOB(int r, int c) { return r < 0 || r >= N || c < 0 || c >= N; }
