@@ -141,7 +141,11 @@ public class Main {
 		int nc = c + dc[d];
 		
 		while(!OOB(nr, nc)) {
-			if(map[nr][nc] == 0) break;
+			if(map[nr][nc] == 0) {
+				nr += dr[d];
+				nc += dc[d];
+				continue;
+			}
 			
 			int[][] tempMap = new int[4][];
 			for(int i = 0; i < 4; i++) tempMap[i] = Arrays.copyOf(map[i], 4);
@@ -163,9 +167,10 @@ public class Main {
 			tempMap[nr][nc] = -1;
 			tempMap[r][c] = 0;
 			
+			
 			int nnr = nr + dr[tempTag.dir];
 			int nnc = nc + dc[tempTag.dir];
-			if(OOB(nnr, nnc) || tempMap[nnr][nnc] == 0) {
+			if(OOB(nnr, nnc)) {
 				maxPoint = Math.max(maxPoint, point + plusPoint); //만약 현재 이동 후 끝난다면, 포인트 갱신
 				nr += dr[d];
 				nc += dc[d];
@@ -188,5 +193,4 @@ public class Main {
 	}
 	
 	public static boolean OOB(int r, int c) { return r < 0 || r >= 4 || c < 0 || c >= 4; }
-	
 }
